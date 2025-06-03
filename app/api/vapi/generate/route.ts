@@ -8,6 +8,7 @@ export async function GET(){
 }
 
 export async function POST(request: Request){
+    console.log("POST api/vapi/generate hit")
     const {type, role, level, techstack, amount, userid} = await request.json()
 
     try {
@@ -38,7 +39,6 @@ export async function POST(request: Request){
             finalized: true,
             coverImage: getRandomInterviewCover(),
             createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
         }
 
         await db.collection("interviews").add(interview);
@@ -50,4 +50,3 @@ export async function POST(request: Request){
         return Response.json({success: false, error},{status: 500});
     }
 }
-
