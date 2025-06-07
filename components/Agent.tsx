@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { vapi } from '@/lib/vapi.sdk';
 import { interviewer } from '@/constants';
-import { generator } from '@/constants';
 
 enum CallStatus {
     INACTIVE = "INACTIVE",
@@ -27,6 +26,8 @@ const Agent = ({
   questions,
 }: AgentProps) => {
 
+    console.log(userName)
+    console.log(userId)
     const router = useRouter();
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
@@ -76,16 +77,15 @@ const Agent = ({
         if (type === "generate") {
           await vapi.start(
             undefined,
+            undefined,
+            undefined,
+            process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!,
             {
               variableValues: {
                 username: userName,
                 userid: userId,
               },
-              clientMessages: ["transcript"],
-              serverMessages: [],
-            },
-            undefined,
-            generator
+            }
           );
         } else {
           let formattedQuestions = "";
@@ -99,13 +99,9 @@ const Agent = ({
             variableValues: {
               questions: formattedQuestions,
             },
-            clientMessages: ["transcript"],
-            serverMessages: [],
           });
         }
       };
-
-
     
     const handleDisconnect = async () => {
         setCallStatus(CallStatus.FINISHED);
@@ -154,7 +150,7 @@ const Agent = ({
         ): (
             <button className='btn-disconnect' onClick={handleDisconnect}>
                 End
-
+                
             </button>
         )}
     </div>
